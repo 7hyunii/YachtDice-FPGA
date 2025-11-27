@@ -36,10 +36,11 @@ module YachtDice_Top(
     // BTN[1] (Key02): Select
     // BTN[4] (Key05): Prev (변경됨)
     // BTN[5] (Key06): Next (변경됨)
-    Button_Debouncer db0 (.clk(CLK), .reset_n(rst_n), .btn_in(~BTN[0]), .btn_out(btn0_clean));
-    Button_Debouncer db1 (.clk(CLK), .reset_n(rst_n), .btn_in(~BTN[1]), .btn_out(btn1_clean));
-    Button_Debouncer db2 (.clk(CLK), .reset_n(rst_n), .btn_in(~BTN[4]), .btn_out(btn2_clean)); // Key05
-    Button_Debouncer db3 (.clk(CLK), .reset_n(rst_n), .btn_in(~BTN[5]), .btn_out(btn3_clean)); // Key06
+    // 버튼이 Active High(누르면 1)인 것으로 추정되므로 반전(~)을 제거합니다.
+    Button_Debouncer db0 (.clk(CLK), .reset_n(rst_n), .btn_in(BTN[0]), .btn_out(btn0_clean));
+    Button_Debouncer db1 (.clk(CLK), .reset_n(rst_n), .btn_in(BTN[1]), .btn_out(btn1_clean));
+    Button_Debouncer db2 (.clk(CLK), .reset_n(rst_n), .btn_in(BTN[4]), .btn_out(btn2_clean)); // Key05
+    Button_Debouncer db3 (.clk(CLK), .reset_n(rst_n), .btn_in(BTN[5]), .btn_out(btn3_clean)); // Key06
 
     // 2. FSM (게임 로직)
     Game_FSM fsm_inst (
