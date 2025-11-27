@@ -26,10 +26,16 @@ module Game_FSM(
     function [3:0] first_free;
         input [11:0] mask;
         integer k;
+        reg found;
         begin
             first_free = 0;
-            for (k = 0; k < 12; k = k + 1)
-                if (!mask[k]) first_free = k;
+            found = 0;
+            for (k = 0; k < 12; k = k + 1) begin
+                if (!mask[k] && !found) begin
+                    first_free = k[3:0];
+                    found = 1;
+                end
+            end
         end
     endfunction
 
@@ -55,8 +61,6 @@ module Game_FSM(
         end
     endfunction
 
-    wire [11:0] cur_mask = (player_turn == 1) ? used_mask_p1 : used_mask_p2;
-
     // 상태 천이
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) state <= S_INIT;
@@ -74,7 +78,7 @@ module Game_FSM(
                 else if (btn1_sel) next_state = S_P1_SELECT;
             end
             S_P1_ROLL: next_state = (roll_cnt == 3) ? S_P1_SELECT : S_P1_WAIT;
-            S_P1_SELECT: if (btn1_sel) next_state = S_P1_CALC;
+            S_P1_SELECT: if (btn1_sel && !used_mask_p1[category_idx]) next_state = S_P1_CALC;
             S_P1_CALC: next_state = S_P2_START;
 
             S_P2_START: next_state = S_P2_WAIT;
@@ -83,7 +87,7 @@ module Game_FSM(
                 else if (btn1_sel) next_state = S_P2_SELECT;
             end
             S_P2_ROLL: next_state = (roll_cnt == 3) ? S_P2_SELECT : S_P2_WAIT;
-            S_P2_SELECT: if (btn1_sel) next_state = S_P2_CALC;
+            S_P2_SELECT: if (btn1_sel && !used_mask_p2[category_idx]) next_state = S_P2_CALC;
             S_P2_CALC: next_state = S_ROUND_CHK;
 
             S_ROUND_CHK: next_state = (round_num >= 12) ? S_GAME_END : S_P1_START;
