@@ -35,11 +35,11 @@ module Dice_Manager(
             lfsr_reg <= (32'hACE1 ^ seed_mix);
 
             // 기본 주사위값 초기화 (각 주사위의 초기 값 1)
-            dice1 <= 1; 
-            dice2 <= 1; 
-            dice3 <= 1; 
-            dice4 <= 1; 
-            dice5 <= 1;
+            dice1 <= 0; 
+            dice2 <= 0; 
+            dice3 <= 0; 
+            dice4 <= 0; 
+            dice5 <= 0;
         end else begin
             // LFSR 상태 업데이트 (매 clk에서 시프트)
             lfsr_reg <= {lfsr_reg[30:0], feedback};
