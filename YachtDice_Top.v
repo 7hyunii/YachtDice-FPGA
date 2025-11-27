@@ -16,7 +16,11 @@ module YachtDice_Top(
 );
 
     // 내부 연결 신호선 (Wires)
-    wire rst_n = RST_BTN; // Active Low (KEY12 is 0 when pressed)
+    // RST_BTN이 눌렀을 때 High(1), 뗐을 때 Low(0)로 동작하는 경우 (Active High)
+    // 시스템은 Active Low 리셋을 사용하므로 반전시켜줍니다.
+    // 눌렀을 때(1) -> 0 (Reset), 뗐을 때(0) -> 1 (Run)
+    wire rst_n = ~RST_BTN; 
+    
     wire btn0_clean, btn1_clean, btn2_clean, btn3_clean; // 디바운싱된 버튼 신호
     wire [2:0] d1, d2, d3, d4, d5; // 주사위 1~5의 값 (1~6)
     wire [1:0] player_turn;        // 현재 턴인 플레이어 (1: P1, 2: P2)
