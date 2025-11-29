@@ -21,6 +21,10 @@ module Game_FSM(
     reg [3:0] state, next_state;
     reg [1:0] roll_cnt;
     reg [11:0] used_mask_p1, used_mask_p2; // 1이면 이미 사용한 카테고리
+    
+    // 상단 보너스 관련 레지스터
+    reg [8:0] p1_upper_score, p2_upper_score; // 상단 항목(1~6) 점수 합계
+    reg p1_bonus_got, p2_bonus_got;           // 보너스 획득 여부 (1: 획득함)
 
     // 유틸리티: 현재 마스크에서 처음 사용 가능한 인덱스
     function [3:0] first_free;
@@ -115,6 +119,9 @@ module Game_FSM(
                     round_num <= 1; p1_score <= 0; p2_score <= 0;
                     used_mask_p1 <= 0; used_mask_p2 <= 0;
                     category_idx <= 0;
+                    // 보너스 초기화
+                    p1_upper_score <= 0; p2_upper_score <= 0;
+                    p1_bonus_got <= 0; p2_bonus_got <= 0;
                 end
                 S_P1_START: begin
                     player_turn <= 1;
@@ -132,8 +139,21 @@ module Game_FSM(
                     else if (used_mask_p1[category_idx]) category_idx <= first_free(used_mask_p1);
                 end
                 S_P1_CALC: begin
-                    p1_score <= p1_score + current_calc_score;
                     used_mask_p1[category_idx] <= 1'b1;
+                    
+                    // 상단 보너스 로직 (카테고리 0~5: Aces~Sixes)
+                    if (category_idx <= 5) begin
+                        p1_upper_score <= p1_upper_score + current_calc_score;
+                        // 이번 점수를 더해서 63점 이상이 되고, 아직 보너스를 안 받았다면
+                        if (!p1_bonus_got && (p1_upper_score + current_calc_score >= 63)) begin
+                            p1_score <= p1_score + current_calc_score + 35; // 보너스 35점 추가
+                            p1_bonus_got <= 1'b1;
+                        end else begin
+                            p1_score <= p1_score + current_calc_score;
+                        end
+                    end else begin
+                        p1_score <= p1_score + current_calc_score;
+                    end
                 end
 
                 S_P2_START: begin
@@ -152,8 +172,21 @@ module Game_FSM(
                     else if (used_mask_p2[category_idx]) category_idx <= first_free(used_mask_p2);
                 end
                 S_P2_CALC: begin
-                    p2_score <= p2_score + current_calc_score;
                     used_mask_p2[category_idx] <= 1'b1;
+
+                    // 상단 보너스 로직 (카테고리 0~5: Aces~Sixes)
+                    if (category_idx <= 5) begin
+                        p2_upper_score <= p2_upper_score + current_calc_score;
+                        // 이번 점수를 더해서 63점 이상이 되고, 아직 보너스를 안 받았다면
+                        if (!p2_bonus_got && (p2_upper_score + current_calc_score >= 63)) begin
+                            p2_score <= p2_score + current_calc_score + 35; // 보너스 35점 추가
+                            p2_bonus_got <= 1'b1;
+                        end else begin
+                            p2_score <= p2_score + current_calc_score;
+                        end
+                    end else begin
+                        p2_score <= p2_score + current_calc_score;
+                    end
                 end
 
                 S_ROUND_CHK: if (next_state == S_P1_START) round_num <= round_num + 1;
