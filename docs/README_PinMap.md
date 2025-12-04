@@ -10,7 +10,7 @@
 | Port Name (Verilog) |  I/O  |   Pin Loc   | Board Label | Function                                                                     |
 | :------------------ | :---: | :----------: | :---------- | :--------------------------------------------------------------------------- |
 | **CLK**       | Input | **B6** | FPGA_CLK1   | 메인 시스템 클럭 (50MHz)                                                     |
-| **RST_BTN**   | Input | **K6** | KEY12       | 시스템 리셋 (Active Low)`<br>` *게임 버튼과 혼동 방지를 위해 KEY12 사용* |
+| **RST_BTN**   | Input | **K6** | KEY12       | 시스템 리셋 (Active Low) 
 
 <br>
 
@@ -54,7 +54,7 @@
 | **LED[2]** | **M2** | LED_D3      | 주사위 3 Hold 상태 표시 (ON) |
 | **LED[3]** | **N7** | LED_D4      | 주사위 4 Hold 상태 표시 (ON) |
 | **LED[4]** | **M7** | LED_D5      | 주사위 5 Hold 상태 표시 (ON) |
-| **LED[5]** | **M3** | LED_D6      | *(미사용 - Always OFF)*    |
+| **LED[5]** | **M3** | LED_D6      | **Select Phase** 표시      |
 | **LED[6]** | **M1** | LED_D7      | **Player 1 Turn** 표시 |
 | **LED[7]** | **N5** | LED_D8      | **Player 2 Turn** 표시 |
 
@@ -105,12 +105,4 @@
 | **LCD_E**         |                        **A6**                        | Enable Signal                     |
 | **LCD_RS**        |                        **G6**                        | Register Select (0: Cmd, 1: Data) |
 | **LCD_RW**        |                        **D6**                        | Read/Write (0: Write)             |
-| **LCD_DATA[7:0]** | **D1, C1, C5, A2,** `<br>` **D4, C3, B2, A4** | Data Bus (D7 ~ D0 순서)           |
-
----
-
-### ⚠️ 특이 사항 및 변경점
-
-1. **라운드 표시:** 기존 7-Segment 표시에서 제거되고, **LCD**를 통해 게임 상태와 함께 관리되거나 생략되었습니다.
-2. **LCD 추가:** 게임 시작/종료 메시지와 실시간 점수(P1, P2)를 표시하기 위해 LCD가 추가되었습니다.
-3. **리셋 버튼:** 게임 플레이 중 실수로 리셋하는 것을 방지하기 위해, 게임 버튼(KEY01~05)과 물리적으로 떨어진 **KEY12**에 할당되었습니다.
+| **LCD_DATA[7:0]** | **D1, C1, C5, A2,** <br> **D4, C3, B2, A4** | Data Bus (D7 ~ D0 순서)           |
